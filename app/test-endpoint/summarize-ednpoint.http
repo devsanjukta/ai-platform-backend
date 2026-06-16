@@ -1,0 +1,7 @@
+### Test Summarizer API
+POST http://127.0.0.1:8000/summarizer/summarize
+Content-Type: application/json
+
+{
+  "text": "Artificial Intelligence is transforming the world by enabling machines to learn, reason, and make decisions. It is used in healthcare, finance, education, and many other industries to automate tasks and improve efficiency."
+}
