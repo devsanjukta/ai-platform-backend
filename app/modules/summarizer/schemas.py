@@ -6,5 +6,4 @@ class SummarizeRequest(BaseModel):
 
 
 class SummarizeResponse(BaseModel):
-    message: str
-    data: str
+    summary: str
