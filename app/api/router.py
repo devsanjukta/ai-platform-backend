@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.summarizer import router as summarizer_router
+from app.api.summarizer_router import router as summarizer_router
 
 api_router = APIRouter()
 
