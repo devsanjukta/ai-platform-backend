@@ -1,6 +1,9 @@
+from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
 from app.core.config import OPENAI_API_KEY
+
+load_dotenv()
 
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 

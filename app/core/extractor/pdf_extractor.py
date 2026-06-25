@@ -1,0 +1,2 @@
+class PdfExtractor:
+    pass
