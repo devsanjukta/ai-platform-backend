@@ -1,0 +1,1 @@
+ALLOWED_TYPES = {".docx"}
