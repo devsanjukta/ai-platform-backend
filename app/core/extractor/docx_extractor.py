@@ -20,3 +20,14 @@ class DocxExtractor:
 
         except Exception as e:
             raise ValueError(f"Failed to extract DOCX content: {str(e)}")
+
+
+def extract_docx_text(file_bytes: bytes) -> str:
+    doc = Document(BytesIO(file_bytes))
+
+    text = []
+
+    for para in doc.paragraphs:
+        text.append(para.text)
+
+    return "\n".join(text)
