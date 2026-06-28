@@ -1,13 +1,17 @@
 import uuid
-from typing import Dict, List
+from typing import List
 
-from app.core.extractor.extractor_utility import FileText
 from app.core.models.chunks import TextChunk
+from app.core.models.text import TextItem
 
 
 def chunk_text(
-    file_id: str, text: str, chunk_size: int = 1000, overlap: int = 150
+    source_id: str, text: str, chunk_size: int = 1000, overlap: int = 150
 ) -> List[TextChunk]:
+    if not text:
+        return []
+
+    overlap = min(overlap, chunk_size - 1)
 
     chunks: List[TextChunk] = []
     start = 0
@@ -20,24 +24,23 @@ def chunk_text(
         chunks.append(
             {
                 "chunk_id": str(uuid.uuid4()),
-                "file_id": file_id,
+                "source_id": source_id,
                 "text": chunk,
                 "chunk_index": chunk_index,
             }
         )
 
         chunk_index += 1
-        start = end - overlap  # overlap helps context continuity
+        start = end - overlap
 
     return chunks
 
 
-def chunk_files_text(cleaned_files: Dict[str, FileText]) -> List[TextChunk]:
-
+def chunk_items(items: List[TextItem]) -> List[TextChunk]:
     all_chunks: List[TextChunk] = []
 
-    for file_id, file_data in cleaned_files.items():
-        chunks = chunk_text(file_id=file_id, text=file_data["file_text"])
+    for item in items:
+        chunks = chunk_text(source_id=item["source_id"], text=item["text"])
         all_chunks.extend(chunks)
 
     return all_chunks

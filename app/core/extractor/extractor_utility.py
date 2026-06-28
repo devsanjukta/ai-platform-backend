@@ -1,37 +1,34 @@
 # from ast import Dict
-from typing import Dict
+from typing import List
 
-from app.core.constants import ALLOWED_TYPES
 from app.core.extractor.docx_extractor import extract_docx_text
-from app.core.models.files import FileObject, FileText
+from app.core.models.files import FileObject
+from app.core.models.text import TextItem
 
 
-def extract_all_text(files: Dict[str, FileObject]) -> Dict[str, FileText]:
-    results: Dict[str, FileText] = {}
+def extract_text_from_files(files: List[FileObject]) -> List[TextItem]:
+    results: List[TextItem] = []
 
-    for file_id, file_obj in files.items():
-        results[file_id] = extract_single_file(file_obj)
+    for file_obj in files:
+        results.append(extract_single_file(file_obj))
 
     return results
 
 
-def extract_single_file(file_obj: FileObject) -> FileText:
+def extract_single_file(file_obj: FileObject) -> TextItem:
     file_type = file_obj["file_type"]
+    source_id = file_obj["file_id"]
 
-    if file_type not in ALLOWED_TYPES:
-        return build_file_text(file_obj)
+    text = ""
 
     if file_type == ".docx":
         text = extract_docx_text(file_obj["file"])
-        return build_file_text(file_obj, text)
 
-    return build_file_text(file_obj)
-
-
-def build_file_text(file_obj: FileObject, text: str) -> FileText:
     return {
-        "file_id": file_obj["file_id"],
-        "file_text": text,
-        "file_name": file_obj.get("file_name", ""),
-        "file_type": file_obj.get("file_type", ""),
+        "source_id": source_id,
+        "text": text,
+        "metadata": {
+            "file_name": file_obj["file_name"],
+            "file_type": file_obj["file_type"],
+        },
     }

@@ -1,36 +1,22 @@
 import re
-from typing import Dict
+from typing import List
 
-from app.core.models.files import FileText
-
-
-def clean_all_text(extracted_files: Dict[str, FileText]) -> Dict[str, FileText]:
-    cleaned: Dict[str, FileText] = {}
-
-    for file_id, file_data in extracted_files.items():
-        cleaned[file_id] = clean_single_text(file_id, file_data)
-
-    return cleaned
+from app.core.models.text import TextItem
 
 
-def clean_single_text(file_id: str, file_data: FileText) -> FileText:
-    text = file_data.get("file_text", "")
+def clean_items(items: List[TextItem]) -> List[TextItem]:
 
-    if not text:
-        return file_data
+    return [
+        {
+            "source_id": item["source_id"],
+            "text": clean_text(item["text"]),
+            "metadata": item.get("metadata", {}),
+        }
+        for item in items
+    ]
 
-    # 1. normalize whitespace
+
+def clean_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
-
-    # 2. remove excessive spaces
-    text = text.strip()
-
-    # 3. remove common junk patterns (MVP level)
-    text = re.sub(r"\x0c", " ", text)  # page breaks
-
-    return {
-        "file_id": file_id,
-        "file_name": file_data.get("file_name"),
-        "file_type": file_data.get("file_type"),
-        "file_text": text,
-    }
+    text = re.sub(r"\x0c", " ", text)
+    return text.strip()
